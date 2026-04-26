@@ -2,6 +2,7 @@ import os
 import models
 from config import DB_PATH
 
+
 def create_schema():
     """Create the database schema if it doesn't exist."""
     if not os.path.exists(DB_PATH):
@@ -10,9 +11,10 @@ def create_schema():
     else:
         print(f"DB already exists at {DB_PATH}")
 
+
 def reset_database():
     print("Resetting database...")
-    
+
     # Remove existing database file if it exists
     if os.path.exists(DB_PATH):
         try:
@@ -21,12 +23,12 @@ def reset_database():
         except Exception as e:
             print(f"Error removing database: {e}")
             return False
-    
+
     # Initialize the database from scratch
     try:
         models.init_db()
         print("Database initialized successfully!")
-        
+
         # Verify tables were created
         conn = models.get_db_connection()
         cur = conn.cursor()
@@ -34,15 +36,21 @@ def reset_database():
         tables = [table[0] for table in cur.fetchall()]
         print(f"Created tables: {tables}")
         conn.close()
-        
+
         return True
     except Exception as e:
         print(f"Error initializing database: {e}")
         return False
 
+
 if __name__ == "__main__":
     success = reset_database()
     if success:
-        print("\nDatabase reset complete. You can now run Main.py to start the application.")
+        print(
+            "\nDatabase reset complete. You can now run Main.py to start the "
+            "application."
+        )
     else:
-        print("\nDatabase reset failed. Please check the error messages above.")
+        print(
+            "\nDatabase reset failed. Please check the error messages above."
+        )
