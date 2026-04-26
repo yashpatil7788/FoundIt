@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ item.name }} - Marketplace{% endblock %}
+
+{% block marketplace_active %}active{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+      --primary:   #4361ee;
+      --secondary: #3f37c9;
+      --accent:    #4cc9f0;
+      --light:     #f8f9fa;
+      --dark:      #212529;
+      --success:   #4CAF50;
+      --danger:    #dc3545;
+      --info:      #17a2b8;
+    }
+
+    .form-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 50px rgba(67, 97, 238, 0.15);
+    animation: fadeIn 0.8s ease-out;
+  }
+    
+    .form-title {
+        font-weight: bold;
+        color: #ff9800;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+
+    body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px 0;
+    }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--primary);
+  }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form label {
+    font-weight: 600;
+    color: var(--dark);
+    display: block;
+    margin-bottom: 8px;
+  }
+    
+  .file-upload {
+    position: relative;
+    border: 2px dashed #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: var(--light);
+    transition: background-color 0.3s, border-color 0.3s;
+    cursor: pointer;
+  }
+  .file-upload:hover {
+    background-color: #eef2f7;
+    border-color: var(--primary);
+  }
+  .file-upload input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+    
+  .current-image {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .current-image img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .preview-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .preview-container img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+    .btn-submit {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: box-shadow 0.3s, transform 0.3s;
+    margin-top: 20px;
+  }
+  .btn-submit:hover {
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--dark);
+    display: block;
+    margin-bottom: 8px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-container">
+                <h2 class="form-title">Edit Marketplace Item</h2>
+                
+                <form action="{{ url_for('marketplace.edit_item', item_id=item.id) }}" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Item Name</label>
+                                <input type="text" id="name" name="name" class="form-control" value="{{ item.name }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="price" class="form-label">Price ($)</label>
+                                <input type="number" id="price" name="price" class="form-control" value="{{ item.price }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="4" required>{{ item.description }}</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="category" class="form-label">Category</label>
+                                <select id="category" name="category" class="form-select" required>
+                                    {% for category in categories %}
+                                        <option value="{{ category.name }}" {% if category.name == item.category %}selected{% endif %}>
+                                            {{ category.name|capitalize }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="condition" class="form-label">Condition</label>
+                                <select id="condition" name="condition" class="form-select" required>
+                                    <option value="new" {% if item.condition == 'new' %}selected{% endif %}>New</option>
+                                    <option value="like-new" {% if item.condition == 'like-new' %}selected{% endif %}>Like New</option>
+                                    <option value="good" {% if item.condition == 'good' %}selected{% endif %}>Good</option>
+                                    <option value="fair" {% if item.condition == 'fair' %}selected{% endif %}>Fair</option>
+                                    <option value="poor" {% if item.condition == 'poor' %}selected{% endif %}>Poor</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="status" class="form-select" required>
+                                    <option value="available" {% if item.status == 'available' %}selected{% endif %}>Available</option>
+                                    <option value="sold" {% if item.status == 'sold' %}selected{% endif %}>Sold</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Current Image</label>
+                      <div class="current-image">
+                        <img src="{{ item.image_path
+                               and url_for('static', filename=item.image_path[1:])
+                               or 'https://dummyimage.com/600x400/cccccc/000000.png&text=No+Image' }}"
+                             alt="{{ item.name }}">
+                      </div>
+            
+                      <label for="image_path">Upload New Image (optional)</label>
+                      <div class="file-upload">
+                        <input type="file" id="image_path" name="image_path"
+                               accept="image/*" onchange="previewImage(this)">
+                        <p class="text-muted">Click or drag file to this area to upload</p>
+                      </div>
+            
+                      <div class="preview-container" id="previewContainer" style="display:none;">
+                        <img id="imagePreview" src="#" alt="Preview">
+                      </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" id="location" name="location" class="form-control" value="{{ item.location }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contact_info" class="form-label">Contact Info</label>
+                                <input type="text" id="contact_info" name="contact_info" class="form-control" value="{{ item.contact_info }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function previewImage(input) {
+    const container = document.getElementById('previewContainer');
+    const preview   = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        container.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      container.style.display = 'none';
+    }
+  }
+</script>
+{% endblock %}

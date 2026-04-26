@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}FoundIt - Register{% endblock %}
+
+{% block styles %}
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4cc9f0;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --success: #4CAF50;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 40px 0;
+  }
+  
+  .register-container {
+    max-width: 750px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 50px rgba(67, 97, 238, 0.15);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+  }
+  
+  .register-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .register-header {
+    text-align: center;
+    margin-bottom: 35px;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .register-header h1 {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  
+  .register-header p {
+    color: #6c757d;
+    font-size: 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.2s; }
+  .form-group:nth-child(3) { animation-delay: 0.3s; }
+  .form-group:nth-child(4) { animation-delay: 0.4s; }
+  .form-group:nth-child(5) { animation-delay: 0.5s; }
+  
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+  
+  .form-control {
+    height: 55px;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+    outline: none;
+  }
+  
+  .form-text {
+    color: #6c757d;
+    font-size: 13px;
+    margin-top: 8px;
+    padding-left: 5px;
+  }
+  
+  .btn-register {
+    height: 55px;
+    border-radius: 12px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    margin-top: 15px;
+  }
+  
+  .btn-register::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, var(--secondary), var(--accent));
+    transition: all 0.5s ease;
+    z-index: -1;
+  }
+  
+  .btn-register:hover::before {
+    left: 0;
+  }
+  
+  .btn-register:hover {
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 30px;
+    color: #6c757d;
+    font-size: 15px;
+    animation: fadeIn 0.8s ease-out;
+    animation-delay: 0.7s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+  
+  .login-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+    position: relative;
+  }
+  
+  .login-link a::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--primary);
+    transition: width 0.3s;
+  }
+  
+  .login-link a:hover::after {
+    width: 100%;
+  }
+  
+  .login-link a:hover {
+    color: var(--secondary);
+  }
+  
+  .error-message {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    color: #842029;
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  .error-message::before {
+    content: "⚠️";
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .role-selector {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .role-option {
+    flex: 1;
+    text-align: center;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+  }
+  
+  .role-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  .role-option.selected {
+    border-color: var(--primary);
+    background-color: rgba(67, 97, 238, 0.05);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.15);
+  }
+  
+  .role-option.selected::before {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .role-option i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  .role-option.selected i {
+    transform: scale(1.1);
+  }
+  
+  .role-option h4 {
+    margin-bottom: 8px;
+    color: #343a40;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .role-option p {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 0;
+    line-height: 1.4;
+  }
+  
+  @media (max-width: 768px) {
+    .role-selector {
+      flex-direction: column;
+    }
+    
+    .register-container {
+      padding: 30px 20px;
+      margin: 20px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+  <div class="register-header">
+    <h1>Join FoundIt</h1>
+    <p>Create your account to get started</p>
+  </div>
+  
+  {% if error %}
+  <div class="error-message">
+    {{ error }}
+  </div>
+  {% endif %}
+  
+  <form method="POST" action="{{ url_for('auth.register') }}">
+    <div class="form-group">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="Choose a unique username" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="email" class="form-label">Email Address</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+      <small class="form-text">We'll never share your email with anyone else.</small>
+    </div>
+    
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password" required>
+      <small class="form-text">Use at least 8 characters with a mix of letters, numbers and symbols.</small>
+    </div>
+    
+    <div class="form-group">
+      <label for="confirm_password" class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Select Your Role</label>
+      <div class="role-selector">
+        <div class="role-option" onclick="selectRole('student')" id="role-student">
+          <i class="fas fa-user-graduate"></i>
+          <h4>Student</h4>
+          <p>Access course materials, connect with peers, and track your progress</p>
+        </div>
+        <div class="role-option" onclick="selectRole('faculty')" id="role-faculty">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <h4>Faculty</h4>
+          <p>Manage courses, interact with students, and access teaching resources</p>
+        </div>
+        <div class="role-option" onclick="selectRole('staff')" id="role-staff">
+          <i class="fas fa-briefcase"></i>
+          <h4>Staff</h4>
+          <p>Access administrative tools, manage campus resources, and support users</p>
+        </div>
+      </div>
+      <input type="hidden" name="role" id="selected_role" value="student">
+    </div>
+    
+    <button type="submit" class="btn-register">Create Account</button>
+    
+    <div class="login-link">
+      Already have an account? <a href="{{ url_for('auth.login') }}">Sign In</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  function selectRole(role) {
+    // Remove selection from all options
+    document.querySelectorAll('.role-option').forEach(el => {
+      el.classList.remove('selected');
+    });
+    
+    // Add selection to chosen role
+    document.getElementById('role-' + role).classList.add('selected');
+    
+    // Update hidden input
+    document.getElementById('selected_role').value = role;
+  }
+  
+  // Set student as default role on page load
+  window.onload = function() {
+    selectRole('student');
+  }
+</script>
+{% endblock %}

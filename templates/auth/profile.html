@@ -1,0 +1,771 @@
+{% extends "base.html" %}
+
+{% block title %}FoundIt - My Profile{% endblock %}
+
+{% block styles %}
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4cc9f0;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --success: #4CAF50;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #0dcaf0;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding-bottom: 40px;
+  }
+  
+  .profile-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .profile-header {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    color: white !important;
+    padding: 40px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(67, 97, 238, 0.15);
+    overflow: hidden;
+  }
+  
+  .profile-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent), #ffffff80);
+    opacity: 0.8;
+  }
+  
+  .profile-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30%;
+    height: 60%;
+    background: radial-gradient(circle at bottom right, rgba(76, 201, 240, 0.3), transparent 70%);
+    z-index: 0;
+  }
+  
+  .profile-header-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .profile-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-right: 35px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 4px solid rgba(255, 255, 255, 0.7);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .profile-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .profile-info h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white !important;
+  }
+  
+  .profile-info p {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .header-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 5;
+  }
+  
+  .edit-profile {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white !important;
+    padding: 10px 18px;
+    border-radius: 30px;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .edit-profile:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logout-btn {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    color: white !important;
+    padding: 10px 18px;
+    border-radius: 30px;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .logout-btn:hover {
+    background-color: var(--danger);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.25);
+  }
+  
+  /* Tabs styling */
+  .nav-tabs {
+    border-bottom: none;
+    margin-bottom: 25px;
+    gap: 10px;
+    display: flex;
+    background-color: white;
+    padding: 5px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .nav-tabs .nav-link {
+    color: #343a40 !important;
+    border: none;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    position: relative;
+    background-color: transparent !important;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-tabs .nav-link:hover:not(.active) {
+    background-color: rgba(67, 97, 238, 0.05) !important;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: var(--primary) !important;
+    background: linear-gradient(to bottom, rgba(67, 97, 238, 0.1), rgba(67, 97, 238, 0.05)) !important;
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.15);
+  }
+  
+  .nav-tabs .nav-link i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+  }
+  
+  /* Tab content styling */
+  .tab-content {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  .tab-pane {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .tab-pane h3 {
+    color: var(--primary) !important;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 12px;
+  }
+  
+  .tab-pane h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    border-radius: 2px;
+  }
+  
+  .tab-pane h4 {
+    color: #343a40 !important;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  /* Item card styling */
+  .item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .item-card {
+    display: flex;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 5px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .item-img {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+  }
+  
+  .item-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .item-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #343a40 !important;
+  }
+  
+  .item-status {
+    font-size: 0.85rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  
+  .status-lost { 
+    background-color: #f8d7da; 
+    color: #842029; 
+  }
+  
+  .status-found { 
+    background-color: #d1e7dd; 
+    color: #0f5132; 
+  }
+  
+  .status-returned { 
+    background-color: #cff4fc; 
+    color: #055160; 
+  }
+  
+  .status-available { 
+    background-color: #d1e7dd; 
+    color: #0f5132; 
+  }
+  
+  .status-sold { 
+    background-color: #f8d7da; 
+    color: #842029; 
+  }
+  
+  .item-details {
+    margin-bottom: 15px;
+    color: #495057;
+    line-height: 1.6;
+  }
+  
+  .item-details strong {
+    color: #343a40;
+    margin-right: 5px;
+  }
+  
+  .item-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white !important;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(67, 97, 238, 0.2);
+  }
+  
+  .btn-warning {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: #212529 !important;
+  }
+  
+  .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(255, 193, 7, 0.2);
+  }
+  
+  .btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: white !important;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(220, 53, 69, 0.2);
+  }
+  
+  /* No items state */
+  .no-items {
+    text-align: center;
+    padding: 50px 0;
+    background: linear-gradient(145deg, #f8f9fa, #f0f0f0);
+    border-radius: 15px;
+    margin-top: 10px;
+  }
+  
+  .no-items i {
+    font-size: 3rem;
+    color: #adb5bd;
+    margin-bottom: 15px;
+    display: block;
+  }
+  
+  .no-items h4 {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #495057 !important;
+  }
+  
+  .no-items p {
+    color: #6c757d !important;
+    margin-bottom: 20px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Form styling */
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+  }
+  
+  .form-control {
+    height: 45px;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+  }
+  
+  .form-select {
+    height: 45px;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+  
+  .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+  }
+  
+  .form-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 5px;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .profile-img {
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+    
+    .header-buttons {
+      position: relative;
+      top: auto;
+      right: auto;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .profile-header {
+      padding: 25px;
+    }
+    
+    .item-card {
+      flex-direction: column;
+    }
+    
+    .item-img {
+      width: 100%;
+      height: 180px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="header-buttons">
+      <button class="edit-profile" type="button" data-bs-toggle="tab" data-bs-target="#settings">
+        <i class="fas fa-cog"></i> Edit Profile
+      </button>
+      <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </div>
+    <div class="profile-header-content">
+      <div class="profile-img">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="profile-info">
+        <h1>{{ user.username }}</h1>
+        <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+        <p><i class="fas fa-user-tag"></i> {{ user.role|capitalize }}</p>
+        <p><i class="fas fa-calendar-alt"></i> Member since: {{ user.created_at }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="lost-found-tab" data-bs-toggle="tab" data-bs-target="#lost-found" type="button" role="tab">
+        <i class="fas fa-search"></i> Lost & Found
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="marketplace-tab" data-bs-toggle="tab" data-bs-target="#marketplace" type="button" role="tab">
+        <i class="fas fa-store"></i> Marketplace
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+    </li>
+  </ul>
+  
+  <div class="tab-content" id="profileTabsContent">
+    <!-- Dashboard Tab -->
+    <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+      <h3>Recent Activity</h3>
+      <div class="item-list">
+        {% if recent_items %}
+          {% for item in recent_items %}
+            <div class="item-card">
+              <img src="{{ url_for('static', filename=item.image_path[1:]) if item.image_path else 'https://dummyimage.com/120x120/cccccc/000000.png&text=No+Image' }}" 
+                   alt="{{ item.name }}" class="item-img">
+              <div class="item-content">
+                <h4 class="item-title">{{ item.name }}</h4>
+                <span class="item-status status-{{ item.status }}">
+                  {{ item.status|capitalize }}
+                </span>
+                <div class="item-details">
+                  <strong>Date:</strong> {{ item.date }}
+                  <strong>Category:</strong> {{ item.category }}
+                </div>
+                
+                <div class="item-actions">
+                  {% if item.type == 'lost_found' %}
+                    <a href="{{ url_for('lost_and_found.item_detail', item_id=item.id) }}" class="btn btn-sm btn-primary">
+                      <i class="fas fa-eye"></i> View Details
+                    </a>
+                  {% else %}
+                    <a href="{{ url_for('marketplace.item_detail', item_id=item.id) }}" class="btn btn-sm btn-primary">
+                      <i class="fas fa-eye"></i> View Details
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-items">
+            <i class="fas fa-chart-bar"></i>
+            <h4>No recent activity</h4>
+            <p>You haven't posted any lost & found items or marketplace listings yet.</p>
+            <div>
+              <a href="{{ url_for('lost_and_found.report') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Report Lost Item
+              </a>
+              <a href="{{ url_for('marketplace.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Listing
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Lost & Found Tab -->
+    <div class="tab-pane fade" id="lost-found" role="tabpanel">
+      <h3>My Lost & Found Items</h3>
+      <div class="item-list">
+        {% if lost_found_items %}
+          {% for item in lost_found_items %}
+            <div class="item-card">
+              <img src="{{ url_for('static', filename=item.image_path[1:]) if item.image_path else 'https://dummyimage.com/120x120/cccccc/000000.png&text=No+Image' }}" 
+                   alt="{{ item.name }}" class="item-img">
+              <div class="item-content">
+                <h4 class="item-title">{{ item.name }}</h4>
+                <span class="item-status status-{{ item.status }}">
+                  {{ item.status|capitalize }}
+                </span>
+                <div class="item-details">
+                  <strong>Location:</strong> {{ item.location }}
+                </div>
+                
+                <div class="item-actions">
+                  <a href="{{ url_for('lost_and_found.item_detail', item_id=item.id) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                  <a href="{{ url_for('lost_and_found.edit_item', item_id=item.id) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Edit
+                  </a>
+                  <form method="post" action="{{ url_for('lost_and_found.delete_item', item_id=item.id) }}" class="d-inline" 
+                        onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-items">
+            <i class="fas fa-search"></i>
+            <h4>No lost & found items</h4>
+            <p>You haven't reported any lost or found items yet.</p>
+            <a href="{{ url_for('lost_and_found.report') }}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Report Item
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Marketplace Tab -->
+    <div class="tab-pane fade" id="marketplace" role="tabpanel">
+      <h3>My Marketplace Listings</h3>
+      <div class="item-list">
+        {% if marketplace_items %}
+          {% for item in marketplace_items %}
+            <div class="item-card">
+              <img src="{{ url_for('static', filename=item.image_path[1:]) if item.image_path else 'https://dummyimage.com/120x120/cccccc/000000.png&text=No+Image' }}" 
+                   alt="{{ item.name }}" class="item-img">
+              <div class="item-content">
+                <h4 class="item-title">{{ item.name }}</h4>
+                <span class="item-status status-{{ item.status }}">
+                  {{ item.status|capitalize }}
+                </span>
+                <div class="item-details">
+                  <strong>Price:</strong> ${{ "%.2f"|format(item.price) }}
+                </div>
+                
+                <div class="item-actions">
+                  <a href="{{ url_for('marketplace.item_detail', item_id=item.id) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                  <a href="{{ url_for('marketplace.edit_item', item_id=item.id) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Edit
+                  </a>
+                  <form method="post" action="{{ url_for('marketplace.delete_item', item_id=item.id) }}" class="d-inline" 
+                        onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-items">
+            <i class="fas fa-store"></i>
+            <h4>No marketplace listings</h4>
+            <p>You haven't created any marketplace listings yet.</p>
+            <a href="{{ url_for('marketplace.create') }}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Create Listing
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div class="tab-pane fade" id="settings" role="tabpanel">
+      <h3>Account Settings</h3>
+      <form method="POST" action="{{ url_for('auth.update_profile') }}" class="mt-4">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role">
+              <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
+              <option value="faculty" {% if user.role == 'faculty' %}selected{% endif %}>Faculty</option>
+              <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
+            </select>
+          </div>
+        </div>
+        
+        <h4 class="mt-4">Change Password</h4>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="current_password" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="current_password" name="current_password" placeholder="Enter current password">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="new_password" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter new password">
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="confirm_password" class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm new password">
+          <small class="form-text text-muted">Leave password fields empty if you don't want to change it.</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.querySelector('.edit-profile');
+    if (editBtn) {
+      editBtn.addEventListener('click', function() {
+        var settingsTabEl = document.querySelector('#settings-tab');
+        if (settingsTabEl) {
+          var tab = new bootstrap.Tab(settingsTabEl);
+          tab.show();
+        }
+      });
+    }
+    
+    // Add subtle animation to cards on hover
+    const itemCards = document.querySelectorAll('.item-card');
+    itemCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+        this.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.08)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 3px 15px rgba(0, 0, 0, 0.05)';
+      });
+    });
+  });
+</script>
+{% endblock %}

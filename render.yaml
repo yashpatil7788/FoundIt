@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: campus-hub
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn Main:app
+    envVars:
+      - key: SECRET_KEY
+        value: your-secret-key
+      - key: POSTGRES_URI
+        value: your-postgres-uri
+      - key: SUPABASE_URL
+        value: your-supabase-url
+      - key: SUPABASE_KEY
+        value: your-supabase-key
+      # Add all other required environment variables here

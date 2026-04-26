@@ -1,0 +1,16 @@
+# .dockerignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.env
+.env.*
+flask_session/
+static/images/
+.git
+.github
+.DS_Store
+.vscode
+.idea

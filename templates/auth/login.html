@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% block title %}FoundIt - Login{% endblock %}
+{% block styles %}
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4cc9f0;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --success: #4CAF50;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  
+  .login-container {
+    max-width: 450px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 50px rgba(67, 97, 238, 0.15);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+  }
+  
+  .login-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 35px;
+  }
+  
+  .login-header h2 {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  
+  .login-header p {
+    color: #6c757d;
+    font-size: 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+  
+  .form-control {
+    height: 55px;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+    outline: none;
+  }
+  
+  .btn-login {
+    height: 55px;
+    border-radius: 12px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .btn-login::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, var(--secondary), var(--accent));
+    transition: all 0.5s ease;
+    z-index: -1;
+  }
+  
+  .btn-login:hover::before {
+    left: 0;
+  }
+  
+  .btn-login:hover {
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    cursor: pointer;
+  }
+  
+  .remember-me input {
+    margin-right: 10px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  
+  .remember-me label {
+    color: #6c757d;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .login-footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #6c757d;
+    font-size: 15px;
+  }
+  
+  .login-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+    position: relative;
+  }
+  
+  .login-footer a::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--primary);
+    transition: width 0.3s;
+  }
+  
+  .login-footer a:hover::after {
+    width: 100%;
+  }
+  
+  .login-footer a:hover {
+    color: var(--secondary);
+  }
+  
+  .alert {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    color: #842029;
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .alert::before {
+    content: "⚠️";
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  
+  /* Animation for form elements */
+  .form-group {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .form-group:nth-child(1) {
+    animation-delay: 0.2s;
+  }
+  
+  .form-group:nth-child(2) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+  <div class="login-header">
+    <h2>Welcome to FoundIt</h2>
+    <p>Sign in to continue your academic journey</p>
+  </div>
+  
+  {% if error %}
+  <div class="alert">{{ error }}</div>
+  {% endif %}
+  
+  <form method="POST" action="{{ url_for('auth.login') }}">
+    <div class="form-group">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
+    </div>
+    
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+    </div>
+    
+    <div class="remember-me">
+      <input type="checkbox" id="remember" name="remember">
+      <label for="remember">Keep me signed in</label>
+    </div>
+    
+    <button type="submit" class="btn-login">Sign In</button>
+  </form>
+  
+  <div class="login-footer">
+    New to FoundIt? <a href="{{ url_for('auth.register') }}">Create an account</a>
+  </div>
+</div>
+{% endblock %}

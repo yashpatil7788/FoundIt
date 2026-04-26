@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} - Marketplace{% endblock %}
+
+{% block marketplace_active %}active{% endblock %}
+
+{% block styles %}
+<style>
+    .item-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .item-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-right: 5px;
+    }
+    
+    .item-details {
+        padding: 30px;
+    }
+    
+    .item-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #004080;
+        margin-bottom: 10px;
+    }
+    
+    .item-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff9800;
+        margin-bottom: 20px;
+    }
+    
+    .item-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 30px;
+    }
+    
+    .item-meta {
+        background: #f9fafc;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .item-meta p {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .item-meta i {
+        width: 25px;
+        color: #004080;
+        margin-right: 10px;
+    }
+    
+    .badge-item {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 30px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    
+    .badge-available {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .badge-sold {
+        background-color: #ff9800;
+        color: white;
+    }
+    
+    .action-buttons {
+        margin-top: 30px;
+    }
+    
+    .btn-contact {
+        background-color: #004080;
+        color: white;
+        border-radius: 30px;
+        padding: 10px 25px;
+        font-size: 1rem;
+        border: none;
+        margin-right: 10px;
+    }
+    
+    .btn-contact:hover {
+        background-color: #003366;
+        color: white;
+    }
+    
+    .btn-edit {
+        background-color: #ffc107;
+        color: #212529;
+        border-radius: 30px;
+        padding: 10px 25px;
+        font-size: 1rem;
+        border: none;
+        margin-right: 10px;
+    }
+    
+    .btn-edit:hover {
+        background-color: #e0a800;
+        color: #212529;
+    }
+    
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        border-radius: 30px;
+        padding: 10px 25px;
+        font-size: 1rem;
+        border: none;
+    }
+    
+    .btn-delete:hover {
+        background-color: #c82333;
+        color: white;
+    }
+    
+    .seller-info {
+        margin-top: 30px;
+        padding: 20px;
+        border-top: 1px solid #eee;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('marketplace.dashboard') }}">Marketplace</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row item-container">
+        <div class="col-md-6 p-3">
+            <div class="item-image">
+              {% if item.images and item.images|length > 0 %}
+                {% for image in item.images %}
+                  <img src="{{ image.image_url }}" class="item-image" alt="{{ item.name }}">
+                {% endfor %}
+              {% else %}
+                <img src="https://dummyimage.com/600x400/cccccc/000000.png&text=No+Image" class="item-image" alt="No Image">
+              {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6 item-details">
+            <div class="badge badge-item {{ 'badge-available' if item.status == 'available' else 'badge-sold' }}">
+                {{ item.status|capitalize }}
+            </div>
+            
+            <h1 class="item-title">{{ item.name }}</h1>
+            <div class="item-price">${{ "%.2f"|format(item.price) }}</div>
+            
+            <div class="item-description">
+                {{ item.description }}
+            </div>
+            
+            <div class="item-meta">
+                <p><i class="fas fa-tag"></i> <strong>Condition:</strong> {{ item.condition|capitalize }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> {{ item.location }}</p>
+                <p><i class="fas fa-calendar"></i> <strong>Listed:</strong> {{ item.date }}</p>
+                <p><i class="fas fa-list-ul"></i> <strong>Category:</strong> {{ item.category|capitalize }}</p>
+            </div>
+            
+            {% if current_user.is_authenticated and (item.user_id == current_user.id or user['is_admin']) %}
+            <div class="seller-info">
+                <p><strong>Seller:</strong> {{ item.username }}</p>
+                <p><i class="fas fa-envelope"></i> <strong>Contact:</strong> {{ item.contact_info }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="action-buttons">
+                {% if current_user.is_authenticated and (item.user_id == current_user.id or user['is_admin']) %}
+                    <a href="{{ url_for('marketplace.edit_item', item_id=item.id) }}" class="btn btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form method="POST" action="{{ url_for('marketplace.delete_item', item_id=item.id) }}" class="d-inline" 
+                          onsubmit="return confirm('Are you sure you want to delete this item?');">
+                        <button type="submit" class="btn btn-delete">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </form>
+                    <a href="mailto:{{ item.contact_info }}" class="btn btn-contact">
+                        <i class="fas fa-envelope"></i> Contact Seller
+                    </a>
+                {% elif current_user.is_authenticated and item.status == 'available' %}
+                    <a href="{{ url_for('marketplace.buy_item', item_id=item.id) }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart"></i> Buy
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

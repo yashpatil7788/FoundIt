@@ -1,0 +1,10 @@
+flask
+flask-login
+flask-session
+flask-mail
+werkzeug
+python-dotenv
+sqlalchemy
+psycopg2-binary
+supabase
+

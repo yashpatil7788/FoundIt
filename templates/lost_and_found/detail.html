@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}FoundIt - Item Details{% endblock %}
+
+{% block lost_found_active %}active{% endblock %}
+
+{% block styles %}
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4cc9f0;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --success: #4CAF50;
+    --danger: #dc3545;
+    --info: #17a2b8;
+  }
+
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    padding: 20px 0;
+  }
+
+  .hub-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 50px rgba(67,97,238,0.15);
+  }
+
+  .detail-header {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    color: white;
+    padding: 25px;
+    border-radius: 15px 15px 0 0;
+    position: relative;
+  }
+
+  .detail-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .status-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .status-lost { background: var(--danger); }
+  .status-found { background: var(--success); }
+  .status-claimed { background: #fd7e14; }
+
+  .detail-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 30px;
+  }
+
+  .detail-image {
+    flex: 1 1 300px;
+  }
+
+  .detail-image img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .detail-info {
+    flex: 1 1 300px;
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--light);
+    background-color:#f5f7fa;
+  }
+
+  .info-section {
+    margin-bottom: 20px;
+  }
+
+  .info-label {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: #6c757d;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .info-value {
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+
+  .description {
+    margin-bottom: 20px;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 25px;
+  }
+
+  .btn-action {
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-back { background-color: var(--dark); color: #fff; }
+  .btn-back:hover { background: #5a6268; transform: translateY(-2px); }
+
+  .btn-edit { background: #ffc107; color: #212529; }
+  .btn-edit:hover { background: #e0a800; transform: translateY(-2px); }
+
+  .btn-delete { background: var(--danger); color: #fff; }
+  .btn-delete:hover { background: #c82333; transform: translateY(-2px);}
+
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--secondary); }
+
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { filter: brightness(0.9); }
+
+  .found-tag, .claimed-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+
+  .found-tag { background: var(--info); color: #fff; }
+  .claimed-tag { background: #fd7e14; color: #fff; }
+
+  @media (max-width: 768px) {
+    .detail-content { flex-direction: column; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hub-container">
+  <div class="detail-header">
+    <h1 class="detail-title">{{ item.name }}</h1>
+    <p>Reported on {{ item.date }}</p>
+    <span class="status-badge status-{{ item.status }}">
+      {% if item.status=='lost' %}Lost{% elif item.status=='found' %}Found{% else %}Claimed{% endif %}
+    </span>
+    {% if found_by_user %}<span class="found-tag">Found by {{ found_by_user }}</span>{% endif %}
+    {% if claimed_by_user %}<span class="claimed-tag">Claimed by {{ claimed_by_user }}</span>{% endif %}
+  </div>
+  <div class="detail-content">
+    <div class="detail-image">
+      {% if item.images and item.images|length > 0 %}
+        {% for image in item.images %}
+          <img src="{{ image.image_url }}" alt="{{ item.name }}">
+        {% endfor %}
+      {% else %}
+        <img src="https://dummyimage.com/600x400/cccccc/000000.png&text=No+Image" alt="No Image">
+      {% endif %}
+    </div>
+    <div class="detail-info">
+      <div class="description">
+        <div class="info-label">Description</div>
+        <p class="info-value">{{ item.description }}</p>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Category</div>
+        <div class="info-value">{{ item.category|capitalize }}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Priority</div>
+        <div class="info-value">
+          {% if item.priority=='3' %}High{% elif item.priority=='2' %}Medium{% else %}Low{% endif %}
+        </div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Location</div>
+        <div class="info-value">{{ item.location }}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Contact Information</div>
+        <div class="info-value">{{ item.contact_info }}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Posted By</div>
+        <div class="info-value">{{ item.username }}</div>
+      </div>
+      <div class="action-buttons">
+        <a href="{{ url_for('lost_and_found.dashboard') }}" class="btn-action btn-back">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+        {% if item.user_id == current_user.id or user.is_admin %}
+          <a href="{{ url_for('lost_and_found.edit_item', item_id=item.id) }}" class="btn-action btn-edit">
+            <i class="fas fa-edit"></i> Edit
+          </a>
+          <form method="post" action="{{ url_for('lost_and_found.delete_item', item_id=item.id) }}" class="d-inline" onsubmit="return confirm('Delete this item?');">
+            <button type="submit" class="btn-action btn-delete">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </form>
+        {% endif %}
+        {% if item.status=='found' and item.user_id != current_user.id %}
+          <form method="post" action="{{ url_for('lost_and_found.claim_item', item_id=item.id) }}" class="d-inline">
+            <button type="submit" class="btn-action btn-primary">
+              <i class="fas fa-handshake"></i> Claim
+            </button>
+          </form>
+        {% elif item.status=='lost' and item.user_id != current_user.id %}
+          <form method="post" action="{{ url_for('lost_and_found.found_user', item_id=item.id) }}" class="d-inline">
+            <button type="submit" class="btn-action btn-success">
+              <i class="fas fa-check"></i> Found It
+            </button>
+          </form>
+        {% endif %}
+        {% if found_by_user and (item.user_id==current_user.id or user.is_admin) %}
+          <form method="post" action="{{ url_for('lost_and_found.remove_found', item_id=item.id) }}" class="d-inline" onsubmit="return confirm('Remove found tag?');">
+            <button type="submit" class="btn-action btn-secondary">
+              <i class="fas fa-undo"></i> Remove Found
+            </button>
+          </form>
+        {% endif %}
+        {% if item.status=='claimed' and (item.user_id==current_user.id or user.is_admin) %}
+          <form method="post" action="{{ url_for('lost_and_found.remove_claim', item_id=item.id) }}" class="d-inline" onsubmit="return confirm('Remove claim?');">
+            <button type="submit" class="btn-action btn-secondary">
+              <i class="fas fa-undo"></i> Remove Claim
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

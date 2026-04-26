@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FoundIt{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9fafc;
+            color: #343a40;
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, #004080, #6c63ff);
+            color: white;
+            padding: 15px;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            margin-right: 15px;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+        .nav-link.active {
+            font-weight: bold;
+            color: white !important;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid white;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .alert {
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        /* Custom styling for cards */
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .price-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        /* Custom button styles */
+        .btn-primary-custom {
+            background-color: #004080;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        .btn-success-custom {
+            background-color: #28a745;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        .btn-danger-custom {
+            background-color: #dc3545;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        /* Custom styling for forms */
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* Custom styling for custom select and inputs */
+        .form-control, .form-select {
+            border-radius: 20px;
+            padding: 10px 15px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #004080;
+            box-shadow: 0 0 0 0.2rem rgba(0, 64, 128, 0.25);
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">FoundIt</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% block lost_found_active %}{% endblock %}" href="{{ url_for('lost_and_found.dashboard') }}">Lost & Found</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% block marketplace_active %}{% endblock %}" href="{{ url_for('marketplace.dashboard') }}">Marketplace</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.id == 'temp' %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light">Login</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-light">Profile</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">Login</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 FoundIt. All rights reserved.</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-end">
+                        <a href="#" class="text-white">About</a> |
+                        <a href="#" class="text-white">Terms</a> |
+                        <a href="#" class="text-white">Privacy</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
