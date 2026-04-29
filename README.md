@@ -1,6 +1,6 @@
 # FoundIt
 
-FoundIt is a modern, production-grade web application for campus communities, built with Flask, SQLAlchemy ORM, and Supabase (PostgreSQL for data, Supabase Storage for images). It is designed with best practices for security, scalability, and maintainability, and is fully cloud-native and container-ready. The app is deployed on Render with automated CI/CD, secret management, and robust error handling.
+FoundIt is a modern, production-grade web application for campus communities, built with Flask, SQLAlchemy ORM, and Supabase (PostgreSQL for data, Supabase Storage for images). It is designed with best practices for security, scalability, and maintainability, and is fully cloud-native and container-ready. The app is deployed on Vercel with automated CI/CD, environment variable management, and robust error handling.
 
 ## Key Platforms
 - **Lost & Found:** Report, search, and manage lost or found items.
@@ -29,16 +29,16 @@ FoundIt is a modern, production-grade web application for campus communities, bu
   - Password hashing (Werkzeug)
   - CSRF protection (Flask-WTF)
   - Session security (Flask-Session, secret key)
-  - Email credentials and secrets managed via environment variables or Render Secret Files
+  - Email credentials and secrets managed via environment variables in Vercel
   - No sensitive data in codebase
 - **Error Handling:**
   - Custom 404 and 500 error pages
   - Logging for startup, DB connection, and errors
 - **Deployment:**
   - Dockerized for local and cloud deployment
-  - Infrastructure-as-code with `render.yaml`
-  - Automated deployment to Render on every push
-  - Secret management and environment variables via Render dashboard
+  - Infrastructure-as-code with `vercel.json`
+  - Automated deployment to Vercel on every push
+  - Secret management and environment variables via the Vercel dashboard
 - **Extensibility:**
   - Modular Flask blueprints
   - Easily add new features (e.g., events, forums, notifications)
@@ -268,9 +268,9 @@ All database operations and core logic are implemented in `models.py` using SQLA
   - Restricted to allowed extensions (png, jpg, jpeg, webp).
   - Images are uploaded directly to Supabase Storage.
 - **Email Verification:** SMTP credentials are kept in environment variables or `.env` (never committed).
-- **Configuration Management:** All sensitive data is managed via environment variables or Render Secret Files.
+- **Configuration Management:** All sensitive data is managed via environment variables in Vercel.
 - **Error Handling:** Custom error pages and logging for all critical operations.
-- **Cloud-Native Deployment:** Fully containerized, with automated deployment and secret management on Render.
+- **Cloud-Native Deployment:** Fully containerized, with automated deployment and secret management on Vercel.
 
 ---
 
@@ -287,18 +287,18 @@ All database operations and core logic are implemented in `models.py` using SQLA
 
 ## Deployment
 
-### Render (Recommended)
-- **Cloud-native deployment** using [Render](https://render.com/), with infrastructure-as-code via `render.yaml`.
+### Vercel (Recommended)
+- **Cloud-native deployment** using [Vercel](https://vercel.com/), with infrastructure-as-code via `vercel.json`.
 - **Automated builds and deploys** on every push to the main branch.
-- **Secret management** via Render dashboard or Secret Files.
-- **Health checks** and logging via Render dashboard.
+- **Secret management** via the Vercel project settings.
+- **Health checks** and logging via the Vercel dashboard.
 - **Scalable and production-ready** out of the box.
 
 #### Steps:
-1. Commit and push your code (including `render.yaml`) to GitHub.
-2. Create a new Web Service on Render and connect your repo.
-3. Set environment variables and/or upload your `.env` as a Secret File.
-4. Deploy and monitor via the Render dashboard.
+1. Commit and push your code (including `vercel.json`) to GitHub.
+2. Import the repository into Vercel and connect it to your project.
+3. Set the required environment variables in the Vercel dashboard.
+4. Deploy and monitor from the Vercel project page.
 
 ## License
 MIT License
