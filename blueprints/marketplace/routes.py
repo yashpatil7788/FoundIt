@@ -64,6 +64,7 @@ def item_detail(item_id):
 @login_required
 def create():
     db = SessionLocal()
+    ensure_marketplace_categories(db)
     # Check if user is temporary
     user = db.query(User).filter_by(id=current_user.id).first()
     if user and user.username == 'temp':
@@ -72,6 +73,11 @@ def create():
         return redirect(url_for('auth.register'))
     if request.method == 'POST':
         form = request.form
+        category = form.get('category')
+        if not category:
+            flash('Please select a category before listing the item.', 'danger')
+            db.close()
+            return redirect(url_for('marketplace.create'))
         file = request.files.get('image')
         img_url = None
         if file and file.filename and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
@@ -86,7 +92,7 @@ def create():
             name=form['name'],
             description=form.get('description'),
             price=form['price'],
-            category=form['category'],
+            category=category,
             condition=form['condition'],
             location=form['location'],
             contact_info=form['contact_info'],
@@ -103,7 +109,6 @@ def create():
         flash('Item listed successfully!', 'success')
         db.close()
         return redirect(url_for('marketplace.dashboard'))
-    ensure_marketplace_categories(db)
     categories = db.query(Category).filter_by(type='marketplace').all()
     db.close()
     return render_template('marketplace/create.html', categories=categories)
@@ -112,6 +117,7 @@ def create():
 @login_required
 def edit_item(item_id):
     db = SessionLocal()
+    ensure_marketplace_categories(db)
     item = db.query(MarketplaceItem).filter_by(id=item_id).first()
     if not item:
         flash('Item not found', 'danger')
@@ -124,6 +130,11 @@ def edit_item(item_id):
         return redirect(url_for('marketplace.dashboard'))
     if request.method == 'POST':
         form = request.form
+        category = form.get('category')
+        if not category:
+            flash('Please select a category before updating the item.', 'danger')
+            db.close()
+            return redirect(url_for('marketplace.edit_item', item_id=item_id))
         file = request.files.get('image_path')
         img_url = None
         if file and file.filename and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
@@ -136,7 +147,7 @@ def edit_item(item_id):
         item.name = form['name']
         item.description = form.get('description')
         item.price = form['price']
-        item.category = form['category']
+        item.category = category
         item.condition = form['condition']
         item.location = form['location']
         item.contact_info = form['contact_info']
@@ -145,7 +156,6 @@ def edit_item(item_id):
         flash('Item updated successfully!', 'success')
         db.close()
         return redirect(url_for('marketplace.item_detail', item_id=item_id))
-    ensure_marketplace_categories(db)
     categories = db.query(Category).filter_by(type='marketplace').all()
     db.close()
     return render_template('marketplace/edit.html', item=item, categories=categories)
