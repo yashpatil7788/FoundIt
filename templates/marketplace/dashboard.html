@@ -250,8 +250,8 @@
                  data-category="{{ item.category }}"
                  data-price="{{ item.price }}">
               <div class="price-tag">${{ "%.2f"|format(item.price) }}</div>
-              {% if item.images and item.images|length > 0 %}
-                <img src="{{ item.images[0].image_url }}" alt="Item Image">
+              {% if item.primary_image_url %}
+                <img src="{{ item.primary_image_url }}" alt="Item Image">
               {% else %}
                 <img src="https://dummyimage.com/400x300/cccccc/000000.png&text=No+Image" alt="No Image">
               {% endif %}

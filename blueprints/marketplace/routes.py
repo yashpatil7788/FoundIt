@@ -43,6 +43,8 @@ def dashboard():
         .order_by(MarketplaceItem.date.desc())
         .all()
     )
+    for item in items:
+        item.primary_image_url = item.images[0].image_url if item.images else None
     total_items = len(items)
     total_available = sum(1 for i in items if i.status == 'available')
     total_sold = sum(1 for i in items if i.status == 'sold')
@@ -67,6 +69,7 @@ def item_detail(item_id):
         db.close()
         flash('Item not found', 'danger')
         return redirect(url_for('marketplace.dashboard'))
+    item.image_urls = [image.image_url for image in item.images]
     user = db.query(User).filter_by(id=current_user.id).first()
     feedback = []  # TODO: Refactor feedback to use ORM if needed
     db.close()

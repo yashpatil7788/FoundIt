@@ -157,9 +157,9 @@
     <div class="row item-container">
         <div class="col-md-6 p-3">
             <div class="item-image">
-              {% if item.images and item.images|length > 0 %}
-                {% for image in item.images %}
-                  <img src="{{ image.image_url }}" class="item-image" alt="{{ item.name }}">
+                            {% if item.image_urls %}
+                                {% for image_url in item.image_urls %}
+                                    <img src="{{ image_url }}" class="item-image" alt="{{ item.name }}">
                 {% endfor %}
               {% else %}
                 <img src="https://dummyimage.com/600x400/cccccc/000000.png&text=No+Image" class="item-image" alt="No Image">
