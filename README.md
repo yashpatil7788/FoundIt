@@ -6,6 +6,9 @@ FoundIt is a modern, production-grade web application for campus communities, bu
 - **Lost & Found:** Report, search, and manage lost or found items.
 - **Marketplace:** Post, browse, and manage items for sale or rent.
 
+## Live Link : https://found-it-mu.vercel.app/auth/login
+  
+
 ## Industry-Grade Features
 - **Authentication & Authorization:**
   - Secure registration and login with hashed passwords (Werkzeug)
