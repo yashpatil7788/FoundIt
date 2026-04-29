@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, request, flash, make_response
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
+from sqlalchemy.orm import selectinload
 
 from . import marketplace_bp
 from config import ALLOWED_EXTENSIONS, SUPABASE_MARKETPLACE_BUCKET
@@ -35,7 +36,13 @@ def ensure_marketplace_categories(db):
 @login_required
 def dashboard():
     db = SessionLocal()
-    items = db.query(MarketplaceItem).filter_by(is_deleted=False).order_by(MarketplaceItem.date.desc()).all()
+    items = (
+        db.query(MarketplaceItem)
+        .options(selectinload(MarketplaceItem.images))
+        .filter_by(is_deleted=False)
+        .order_by(MarketplaceItem.date.desc())
+        .all()
+    )
     total_items = len(items)
     total_available = sum(1 for i in items if i.status == 'available')
     total_sold = sum(1 for i in items if i.status == 'sold')
@@ -50,7 +57,12 @@ def dashboard():
 @login_required
 def item_detail(item_id):
     db = SessionLocal()
-    item = db.query(MarketplaceItem).filter_by(id=item_id, is_deleted=False).first()
+    item = (
+        db.query(MarketplaceItem)
+        .options(selectinload(MarketplaceItem.images))
+        .filter_by(id=item_id, is_deleted=False)
+        .first()
+    )
     if not item:
         db.close()
         flash('Item not found', 'danger')
