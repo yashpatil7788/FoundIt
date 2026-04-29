@@ -6,6 +6,31 @@ from . import marketplace_bp
 from config import ALLOWED_EXTENSIONS, SUPABASE_MARKETPLACE_BUCKET
 from models import SessionLocal, MarketplaceItem, ItemImage, upload_image_to_supabase, User, Category
 
+DEFAULT_MARKETPLACE_CATEGORIES = [
+    'Electronics',
+    'Books',
+    'Clothing',
+    'Furniture',
+    'Accessories',
+    'Sports',
+    'Services',
+    'Other',
+]
+
+
+def ensure_marketplace_categories(db):
+    existing_categories = {
+        category.name for category in db.query(Category).filter_by(type='marketplace').all()
+    }
+    missing_categories = [
+        Category(name=name, type='marketplace')
+        for name in DEFAULT_MARKETPLACE_CATEGORIES
+        if name not in existing_categories
+    ]
+    if missing_categories:
+        db.add_all(missing_categories)
+        db.commit()
+
 @marketplace_bp.route('/')
 @login_required
 def dashboard():
@@ -15,6 +40,7 @@ def dashboard():
     total_available = sum(1 for i in items if i.status == 'available')
     total_sold = sum(1 for i in items if i.status == 'sold')
     recent_items = items[:10]
+    ensure_marketplace_categories(db)
     categories = db.query(Category).filter_by(type='marketplace').all()
     user = db.query(User).filter_by(id=current_user.id).first()
     db.close()
@@ -77,6 +103,7 @@ def create():
         flash('Item listed successfully!', 'success')
         db.close()
         return redirect(url_for('marketplace.dashboard'))
+    ensure_marketplace_categories(db)
     categories = db.query(Category).filter_by(type='marketplace').all()
     db.close()
     return render_template('marketplace/create.html', categories=categories)
@@ -118,6 +145,7 @@ def edit_item(item_id):
         flash('Item updated successfully!', 'success')
         db.close()
         return redirect(url_for('marketplace.item_detail', item_id=item_id))
+    ensure_marketplace_categories(db)
     categories = db.query(Category).filter_by(type='marketplace').all()
     db.close()
     return render_template('marketplace/edit.html', item=item, categories=categories)
